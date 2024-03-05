@@ -22,13 +22,7 @@ function App() {
   const [hasMore, setHasMore] = useState<boolean>(true);
 
   const fetchAction = useCallback(
-    ({
-      dataMusic,
-      pageMusic,
-    }: {
-      dataMusic: MusicData[];
-      pageMusic: number;
-    }) => {
+    ({ dataMusic }: { dataMusic: MusicData[]; pageMusic: number }) => {
       const temp = dataMusic || [];
       setDataFix(temp);
       setHasMore(temp.length % LIMIT_QUERY === 0);
@@ -37,8 +31,6 @@ function App() {
   );
 
   const { isLoading } = useMusicList({ search: searchData, page, fetchAction });
-
-  console.log(dataFix);
 
   const submitForm = async ({ search }: { search: string }) => {
     setSearchData((prev) => {
@@ -63,16 +55,8 @@ function App() {
     }),
   });
 
-  const {
-    values,
-    errors,
-    touched,
-    handleChange,
-    handleBlur,
-    handleSubmit,
-    isSubmitting,
-    isValid,
-  } = formik;
+  const { values, errors, touched, handleChange, handleBlur, handleSubmit } =
+    formik;
 
   if (!searchData) {
     return (
