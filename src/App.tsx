@@ -1,10 +1,10 @@
 import { useCallback, useState } from "react";
 import ngMusicLogo from "./assets/logo.svg";
 import ngMusicTitle from "./assets/ngmusic.svg";
-
+import currencyLogo from "./assets/currency-dollar.svg";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Button, Input, Typography } from "@material-tailwind/react";
+import { Button, Chip, Input, Typography } from "@material-tailwind/react";
 import { LIMIT_QUERY, missingObj } from "./Util";
 import {
   Bars3Icon,
@@ -158,6 +158,25 @@ function App() {
                     >
                       {data.trackName}
                     </Typography>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <Chip
+                      value={data.primaryGenreName}
+                      className="rounded-[10px] bg-[#10b981]"
+                    />
+                    <div className="flex items-center gap-[5px]">
+                      <img
+                        src={currencyLogo}
+                        className="logo"
+                        alt="Music Logo"
+                      />
+                      <Typography
+                        {...missingObj}
+                        className="text-xs font-bold text-[#f5b014]"
+                      >
+                        {data.trackPrice}
+                      </Typography>
+                    </div>
                   </div>
                 </div>
               </div>
