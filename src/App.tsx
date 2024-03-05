@@ -63,8 +63,8 @@ function App() {
       <div className="min-h-screen relative flex flex-col justify-center items-center bg-gradient-to-b from-deep-purple to-mid-purple">
         <img src={ngMusicLogo} className="logo" alt="Music Logo" />
         <div className="absolute bottom-6 left-6 right-6">
-          <form onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-[15px] w-full">
+          <form onSubmit={handleSubmit} className="flex justify-center w-full">
+            <div className="flex flex-col gap-[15px] w-full md:w-3/5">
               <Input
                 crossOrigin={undefined}
                 type="text"
@@ -120,85 +120,89 @@ function App() {
           />
         </div>
       </header>
-      <div className="flex justify-center items-center gap-[10px] w-full">
-        <Typography {...missingObj} className="text-[#334155] text-sm">
-          Search result for:
-        </Typography>
-        <Typography
-          {...missingObj}
-          className="text-[#7b34dd] text-lg font-bold"
-        >
-          {searchData}
-        </Typography>
-      </div>
-      <div className="flex justify-center px-4">
-        <div className="flex flex-col min-w-full gap-[20px]">
-          {dataFix.map((data) => (
-            <div
-              key={`${data.artistId}-${data.trackId}-${data.collectionId}`}
-              className="p-3 rounded-[10px] bg-white shadow-card w-full"
+      <div className="flex justify-center w-full">
+        <div className="flex flex-col gap-[36px] w-full md:w-3/5">
+          <div className="flex justify-center items-center gap-[10px] w-full">
+            <Typography {...missingObj} className="text-[#334155] text-sm">
+              Search result for:
+            </Typography>
+            <Typography
+              {...missingObj}
+              className="text-[#7b34dd] text-lg font-bold"
             >
-              <div className="flex gap-3 w-full">
-                <img
-                  className="h-[100px] w-[100px] object-cover object-center"
-                  src={data.artworkUrl100}
-                  alt="track"
-                />
-                <div className="flex flex-col justify-between w-full">
-                  <div className="flex flex-col gap-[5px] w-full">
-                    <Typography
-                      {...missingObj}
-                      className="text-base md:text-xs text-[#334155] font-medium"
-                    >
-                      {data.artistName}
-                    </Typography>
-                    <Typography
-                      {...missingObj}
-                      className="text-lg md:text-sm text-[#334155] font-bold"
-                    >
-                      {data.trackName}
-                    </Typography>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <Chip
-                      value={data.primaryGenreName}
-                      className="rounded-[10px] bg-[#10b981]"
+              {searchData}
+            </Typography>
+          </div>
+          <div className="flex justify-center px-4">
+            <div className="flex flex-col min-w-full gap-[20px]">
+              {dataFix.map((data) => (
+                <div
+                  key={`${data.artistId}-${data.trackId}-${data.collectionId}`}
+                  className="p-3 rounded-[10px] bg-white shadow-card w-full"
+                >
+                  <div className="flex gap-3 w-full">
+                    <img
+                      className="h-[100px] w-[100px] object-cover object-center"
+                      src={data.artworkUrl100}
+                      alt="track"
                     />
-                    <div className="flex items-center gap-[5px]">
-                      <img
-                        src={currencyLogo}
-                        className="logo"
-                        alt="Music Logo"
-                      />
-                      <Typography
-                        {...missingObj}
-                        className="text-xs font-bold text-[#f5b014]"
-                      >
-                        {data.trackPrice}
-                      </Typography>
+                    <div className="flex flex-col justify-between w-full">
+                      <div className="flex flex-col gap-[5px] w-full">
+                        <Typography
+                          {...missingObj}
+                          className="text-base md:text-xs text-[#334155] font-medium"
+                        >
+                          {data.artistName}
+                        </Typography>
+                        <Typography
+                          {...missingObj}
+                          className="text-lg md:text-sm text-[#334155] font-bold"
+                        >
+                          {data.trackName}
+                        </Typography>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <Chip
+                          value={data.primaryGenreName}
+                          className="rounded-[10px] bg-[#10b981]"
+                        />
+                        <div className="flex items-center gap-[5px]">
+                          <img
+                            src={currencyLogo}
+                            className="logo"
+                            alt="Music Logo"
+                          />
+                          <Typography
+                            {...missingObj}
+                            className="text-xs font-bold text-[#f5b014]"
+                          >
+                            {data.trackPrice}
+                          </Typography>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              ))}
+              {hasMore ? (
+                <div className="flex justify-center">
+                  <Button
+                    {...missingObj}
+                    className="bg-[#e2e8f0] mb-[20px] text rounded-[18px]"
+                    loading={isLoading && page > 1}
+                  >
+                    <Typography
+                      {...missingObj}
+                      className="text-[#64748b] text-xs font-medium"
+                      onClick={handleLoadMore}
+                    >
+                      Load More
+                    </Typography>
+                  </Button>
+                </div>
+              ) : null}
             </div>
-          ))}
-          {hasMore ? (
-            <div className="flex justify-center">
-              <Button
-                {...missingObj}
-                className="bg-[#e2e8f0] mb-[20px] text rounded-[18px]"
-                loading={isLoading && page > 1}
-              >
-                <Typography
-                  {...missingObj}
-                  className="text-[#64748b] text-xs font-medium"
-                  onClick={handleLoadMore}
-                >
-                  Load More
-                </Typography>
-              </Button>
-            </div>
-          ) : null}
+          </div>
         </div>
       </div>
       {openModal ? (
