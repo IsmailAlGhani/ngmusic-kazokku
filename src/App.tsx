@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ngMusicLogo from "./assets/logo.svg";
 import ngMusicTitle from "./assets/ngmusic.svg";
 import currencyLogo from "./assets/currency-dollar.svg";
@@ -13,13 +13,16 @@ import {
 } from "@heroicons/react/24/outline";
 import { MusicData, useMusicList } from "./api/query";
 import LoadingSpinner from "./components/LoadingSpinner";
+import ImageTrack from "./components/ImageTrack";
 
 function App() {
+  const trackSong = useRef(new Audio());
   const [searchData, setSearchData] = useState<string | undefined>();
   const [page, setPage] = useState<number>(1);
   const [openModal, setOpenModal] = useState(false);
   const [dataFix, setDataFix] = useState<MusicData[]>([]);
   const [hasMore, setHasMore] = useState<boolean>(true);
+  const [urlSound, setUrlSound] = useState<string | undefined>();
 
   const fetchAction = useCallback(
     ({ dataMusic }: { dataMusic: MusicData[]; pageMusic: number }) => {
@@ -31,6 +34,13 @@ function App() {
   );
 
   const { isLoading } = useMusicList({ search: searchData, page, fetchAction });
+
+  useEffect(() => {
+    if (urlSound) {
+      const targetAudio = trackSong.current;
+      targetAudio.play();
+    }
+  }, [urlSound]);
 
   const submitForm = async ({ search }: { search: string }) => {
     setSearchData((prev) => {
@@ -103,8 +113,19 @@ function App() {
 
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
+  const handleChangeSound = (urlTrack: string) => {
+    if (urlSound === urlTrack) {
+      const targetAudio = trackSong.current;
+      targetAudio.pause();
+      setUrlSound(undefined);
+    } else {
+      setUrlSound(urlTrack);
+    }
+  };
 
   const handleLoadMore = () => setPage((page) => page + 1);
+
+  const handleEnded = () => setUrlSound(undefined);
 
   return (
     <div className="min-h-screen flex flex-col gap-[36px] bg-[#f8fafc] w-full">
@@ -141,10 +162,12 @@ function App() {
                   className="p-3 rounded-[10px] bg-white shadow-card w-full"
                 >
                   <div className="flex gap-3 w-full">
-                    <img
-                      className="h-[100px] w-[100px] object-cover object-center"
+                    <ImageTrack
                       src={data.artworkUrl100}
-                      alt="track"
+                      playSong={urlSound === data.previewUrl}
+                      handleChangeSound={() =>
+                        handleChangeSound(data.previewUrl)
+                      }
                     />
                     <div className="flex flex-col justify-between w-full">
                       <div className="flex flex-col gap-[5px] w-full">
@@ -214,49 +237,54 @@ function App() {
               onClick={handleCloseModal}
             />
           </div>
-          <div className="flex flex-col w-full gap[15px] px-[30px]">
-            <Typography
-              {...missingObj}
-              className="text-xl font-bold text-center text-white"
-            >
-              Search
-            </Typography>
-            <form onSubmit={handleSubmit}>
-              <div className="flex flex-col gap-[15px] w-full">
-                <Input
-                  crossOrigin={undefined}
-                  type="text"
-                  id="search"
-                  name="search"
-                  data-testid={"search-form"}
-                  label="Artist / Album / Title"
-                  placeholder="Artist / Album / Title"
-                  variant="outlined"
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  value={values.search}
-                  labelProps={{
-                    className: "hidden",
-                  }}
-                  className="font-normal text-center placeholder:text-xs !bg-[#FFFFFF] !rounded-[20px] border-none"
-                  required={true}
-                  error={typeof errors.search === "string" && touched.search}
-                  success={errors.search === undefined && touched.search}
-                />
-                <Button
-                  {...missingObj}
-                  variant="filled"
-                  type="submit"
-                  data-testid={"submit-form"}
-                  className="bg-gradient-to-r from-deep-purple to-mid-purple !rounded-[20px]"
-                >
-                  Search
-                </Button>
-              </div>
-            </form>
+          <div className="flex justify-center w-full">
+            <div className="flex flex-col w-full md:w-3/5 gap-[15px] px-[30px]">
+              <Typography
+                {...missingObj}
+                className="text-xl font-bold text-center text-white"
+              >
+                Search
+              </Typography>
+              <form onSubmit={handleSubmit}>
+                <div className="flex flex-col gap-[15px] w-full">
+                  <Input
+                    crossOrigin={undefined}
+                    type="text"
+                    id="search"
+                    name="search"
+                    data-testid={"search-form"}
+                    label="Artist / Album / Title"
+                    placeholder="Artist / Album / Title"
+                    variant="outlined"
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    value={values.search}
+                    labelProps={{
+                      className: "hidden",
+                    }}
+                    className="font-normal text-center placeholder:text-xs !bg-[#FFFFFF] !rounded-[20px] border-none"
+                    required={true}
+                    error={typeof errors.search === "string" && touched.search}
+                    success={errors.search === undefined && touched.search}
+                  />
+                  <Button
+                    {...missingObj}
+                    variant="filled"
+                    type="submit"
+                    data-testid={"submit-form"}
+                    className="bg-gradient-to-r from-deep-purple to-mid-purple !rounded-[20px]"
+                  >
+                    Search
+                  </Button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       ) : null}
+      <div className="hidden">
+        <audio ref={trackSong} src={urlSound} onEnded={handleEnded} />
+      </div>
     </div>
   );
 }
